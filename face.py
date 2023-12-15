@@ -15,11 +15,11 @@ def create_directories(face_identifiers):
     for identifier in face_identifiers:
         os.makedirs(identifier, exist_ok=True)
 
-def organize_images(image_folder):
+def organize_images(input_folder, output_folder):
     face_identifiers = set()
 
-    for filename in os.listdir(image_folder):
-        image_path = os.path.join(image_folder, filename)
+    for filename in os.listdir(input_folder):
+        image_path = os.path.join(input_folder, filename)
 
         # Check if the source file exists
         if not os.path.exists(image_path):
@@ -42,36 +42,15 @@ def organize_images(image_folder):
         # Organize images based on detected faces
         for face in faces:
             identifier = generate_identifier(image_path, face)
+            destination_directory = os.path.join(output_folder, identifier)
 
             # Check if the destination directory exists
-            if not os.path.exists(identifier):
-                os.makedirs(identifier, exist_ok=True)
+            if not os.path.exists(destination_directory):
+                os.makedirs(destination_directory, exist_ok=True)
 
-            face_identifiers.add(identifier)
+            face_identifiers.add(destination_directory)
 
-    # Move images to respective directories
-    for filename in os.listdir(image_folder):
-        image_path = os.path.join(image_folder, filename)
-
-        # Check if the source file exists
-        if not os.path.exists(image_path):
-            print(f"Source file not found: {image_path}")
-            continue  # Skip to the next iteration
-
-        image = cv2.imread(image_path)
-        if image is None:
-            print(f"Failed to read image: {image_path}")
-            continue  # Skip to the next iteration
-
-        faces = detect_faces(image)
-
-        for face in faces:
-            identifier = generate_identifier(image_path, face)
-            destination_path = os.path.join(identifier, filename)
-
-            # Check if the destination directory exists
-            if not os.path.exists(identifier):
-                os.makedirs(identifier, exist_ok=True)
+            destination_path = os.path.join(destination_directory, filename)
 
             try:
                 print(f"Moving {image_path} to {destination_path}")
@@ -83,5 +62,6 @@ def organize_images(image_folder):
 
 if __name__ == "__main__":
     # Replace 'your_image_folder' with the path to your folder containing images
-    image_folder = r'D:\Photos\hi\New folder'
-    organize_images(image_folder)
+    input_folder = r'D:\Photos\hi\New folder'
+    output_folder = r'C:\Path\To\Your\Output\Folder'
+    organize_images(input_folder, output_folder)
