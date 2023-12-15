@@ -20,7 +20,11 @@ def organize_images(image_folder):
 
     for filename in os.listdir(image_folder):
         image_path = os.path.join(image_folder, filename)
-        print(f"Processing image: {image_path}")
+
+        # Check if the source file exists
+        if not os.path.exists(image_path):
+            print(f"Source file not found: {image_path}")
+            continue  # Skip to the next iteration
 
         # Read the image
         image = cv2.imread(image_path)
@@ -38,22 +42,42 @@ def organize_images(image_folder):
         # Organize images based on detected faces
         for face in faces:
             identifier = generate_identifier(image_path, face)
-            face_identifiers.add(identifier)
 
-    # Create directories
-    create_directories(face_identifiers)
+            # Check if the destination directory exists
+            if not os.path.exists(identifier):
+                os.makedirs(identifier, exist_ok=True)
+
+            face_identifiers.add(identifier)
 
     # Move images to respective directories
     for filename in os.listdir(image_folder):
         image_path = os.path.join(image_folder, filename)
+
+        # Check if the source file exists
+        if not os.path.exists(image_path):
+            print(f"Source file not found: {image_path}")
+            continue  # Skip to the next iteration
+
         image = cv2.imread(image_path)
         faces = detect_faces(image)
 
         for face in faces:
             identifier = generate_identifier(image_path, face)
             destination_path = os.path.join(identifier, filename)
-            shutil.move(image_path, destination_path)
+
+            # Check if the destination directory exists
+            if not os.path.exists(identifier):
+                os.makedirs(identifier, exist_ok=True)
+
+            try:
+                print(f"Moving {image_path} to {destination_path}")
+                shutil.move(image_path, destination_path)
+            except FileNotFoundError as e:
+                print(f"Error moving file: {e}")
+            except Exception as e:
+                print(f"Unexpected error: {e}")
 
 if __name__ == "__main__":
-    image_folder = r'D:\Photos\hi'
+    # Replace 'your_image_folder' with the path to your folder containing images
+    image_folder = r'C:\Users\YourUsername\Desktop\images'
     organize_images(image_folder)
