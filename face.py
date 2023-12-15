@@ -59,6 +59,10 @@ def organize_images(image_folder):
             continue  # Skip to the next iteration
 
         image = cv2.imread(image_path)
+        if image is None:
+            print(f"Failed to read image: {image_path}")
+            continue  # Skip to the next iteration
+
         faces = detect_faces(image)
 
         for face in faces:
@@ -79,5 +83,5 @@ def organize_images(image_folder):
 
 if __name__ == "__main__":
     # Replace 'your_image_folder' with the path to your folder containing images
-    image_folder = r'C:\Users\YourUsername\Desktop\images'
+    image_folder = r'D:\Photos\hi\New folder'
     organize_images(image_folder)
